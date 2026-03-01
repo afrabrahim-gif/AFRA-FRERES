@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤسسة أفرا إخوان - النظام المطور</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --af-blue: #004a99;
+            --af-green: #2ecc71;
+            --af-red: #e74c3c;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                        url('slide-311220.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-top: 15px solid var(--af-blue);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #eee;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .brand-section h1 { margin: 0; color: var(--af-blue); font-weight: 900; font-size: 2.8rem; }
+        .logo-box img { height: 150px; width: auto; }
+
+        .balance-indicator {
+            text-align: center;
+            background: rgba(248, 249, 250, 0.9);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        #bigDiffDisplay { font-size: 5.5rem; font-weight: 900; margin: 0; }
+        .status-msg { font-size: 1.8rem; font-weight: 900; }
+
+        .table-responsive { overflow-x: auto; margin-bottom: 25px; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1150px; background: white; }
+        th { background: var(--af-blue); color: white; padding: 12px; font-size: 0.9rem; border: 1px solid #fff; }
+        td { border: 1px solid #eee; padding: 8px; text-align: center; font-weight: bold; }
+
+        .product-header { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .product-img { width: 45px; height: 45px; object-fit: contain; }
+
+        input[type="number"].qty-input {
+            width: 55px; padding: 8px; border: 2px solid #dce1e8; border-radius: 8px; text-align: center; font-weight: 900;
+        }
+
+        .summary-section {
+            display: flex; justify-content: space-around; align-items: center; background: var(--af-blue);
+            color: white; padding: 30px; border-radius: 25px; flex-wrap: wrap; gap: 20px;
+        }
+
+        #payment {
+            width: 320px; font-size: 4.5rem; height: 110px; border-radius: 20px; border: 8px solid var(--af-green);
+            text-align: center; font-weight: 900; color: var(--af-blue);
+        }
+
+        .stat-box { text-align: center; }
+        .stat-box h2 { font-size: 3.5rem; margin: 0; font-weight: 900; }
+
+        .btn { padding: 15px 35px; border: none; border-radius: 12px; cursor: pointer; font-family: 'Cairo'; font-weight: 900; color: white; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-top">
+        <div class="brand-section">
+            <h1>مؤسسة أفرا إخوان</h1>
+            <p style="color: var(--af-green); font-weight: 900;">الوكيل المعتمد - أفريقيا غاز</p>
+        </div>
+        <div class="logo-box">
+            <img src="logo.png" alt="Logo">
+        </div>
+    </div>
+
+    <div class="balance-indicator">
+        <div id="bigDiffDisplay">0.00</div>
+        <div id="personalizedMsg" class="status-msg">اختر الموزع للبدء</div>
+    </div>
+
+    <div style="display:flex; gap:15px; justify-content:center; margin-bottom:25px; flex-wrap: wrap;">
+        <select id="distributorSelect" style="padding:15px; border-radius:12px; font-weight:900; border:3px solid var(--af-blue); font-size:1.2rem;"></select>
+        <button class="btn" style="background:#25d366" onclick="sendWhatsApp()">📱 واتساب</button>
+        <button class="btn" style="background:var(--af-red)" onclick="resetTable()">🗑️ مسح</button>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr id="headerRow"><th style="min-width: 120px;">الدوريات</th></tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr id="shift1"><td>دورية 1</td></tr>
+                <tr id="shift2"><td>دورية 2</td></tr>
+                <tr id="shift3"><td>دورية 3</td></tr>
+                <tr id="rowTotal" style="background:#f1f3f5; font-weight:900; color:var(--af-blue);"><td title="مجموع كميات القطع">مجموع الكمية</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="summary-section">
+        <div class="stat-box"><div>💰 الإجمالي المالي</div><h2 id="grandTotal">0.00</h2></div>
+        <div class="stat-box"><div>💵 المدفوع</div><input type="number" id="payment" value="0" oninput="calculateAll()"></div>
+        <div class="stat-box"><div>⚖️ الناتج النهائي</div><h2 id="finalDef">0.00</h2></div>
+    </div>
+</div>
+
+<script>
+const products = [
+    { name: "قنينة 12 كلغ", price: 49.00, img: "butane-12kg.png" },
+    { name: "قنينة 3 كلغ", price: 12.10, img: "butane-3kg.png" },
+    { name: "قنينة 6 كلغ", price: 24.50, img: "butane-6kg.png" },
+    { name: "جيل جديد 12 كلغ", price: 49.00, img: "new-gen-12kg.png" },
+    { name: "فارغ 12 كلغ", price: 75.00, img: "empty-12kg.png" },
+    { name: "فارغ 3 كلغ", price: 38.00, img: "empty-3kg.png" },
+    { name: "فارغ 6 كلغ", price: 50.00, img: "empty-6kg.png" },
+    { name: "فارغ جيل جديد", price: 270.00, img: "empty-new-gen.png" },
+    { name: "منظم غاز", price: 55.00, img: "regulator.png" }
+];
+
+const distributorsInfo = [
+    { name: "الديواني بلعيد", phone: "212662767999" },
+    { name: "الغيراوي بوجمعة", phone: "212666592345" },
+    { name: "الوسيع سعيد", phone: "212666117447" },
+    { name: "اشوحال إسماعيل", phone: "212666593789" },
+    { name: "أشوحال علي", phone: "212666592849" },
+    { name: "ضباشين محمد", phone: "21262769433" },
+    { name: "ضباشين الحسين", phone: "212667150038" },
+    { name: "ابوك حسن", phone: "212668300141" },
+    { name: "ابوك أحمد", phone: "212666588981" },
+    { name: "المنصوري محمد", phone: "212701079700" },
+    { name: "بهوش المحفوظ", phone: "212668557701" },
+    { name: "أيت عابد الحسين", phone: "212666484922" },
+    { name: "أملال حسن", phone: "212661342859" },
+    { name: "أدنصار الحسين", phone: "212661340747" }
+];
+
+let distributorsData = {};
+const distSelect = document.getElementById("distributorSelect");
+
+distributorsInfo.forEach(d => {
+    let saved = localStorage.getItem("dist_" + d.name);
+    distributorsData[d.name] = saved ? JSON.parse(saved) : products.map(() => [0, 0, 0]);
+    let opt = document.createElement("option");
+    opt.value = d.name; opt.text = d.name;
+    distSelect.appendChild(opt);
+});
+
+function setupTable() {
+    const headerRow = document.getElementById("headerRow");
+    headerRow.innerHTML = '<th style="min-width: 120px;">الدوريات</th>';
+    ['shift1','shift2','shift3','rowTotal'].forEach(id => {
+        let firstCell = id === 'rowTotal' ? '<td>مجموع الكمية</td>' : `<td>دورية ${id.slice(-1)}</td>`;
+        document.getElementById(id).innerHTML = firstCell;
+    });
+
+    products.forEach((p, pIdx) => {
+        let th = document.createElement("th");
+        th.innerHTML = `<div class="product-header"><img src="${p.img}" class="product-img" onerror="this.src='https://via.placeholder.com/45'"><span>${p.name}</span></div>`;
+        headerRow.appendChild(th);
+
+        for (let s = 1; s <= 3; s++) {
+            let cell = document.getElementById("shift" + s).insertCell();
+            let inp = document.createElement("input");
+            inp.type = "number"; inp.className = "qty-input";
+            inp.value = distributorsData[distSelect.value][pIdx][s - 1];
+            inp.oninput = () => {
+                distributorsData[distSelect.value][pIdx][s - 1] = parseFloat(inp.value) || 0;
+                localStorage.setItem("dist_" + distSelect.value, JSON.stringify(distributorsData[distSelect.value]));
+                calculateAll();
+            };
+            cell.appendChild(inp);
+        }
+        document.getElementById("rowTotal").insertCell().id = `total-qty-${pIdx}`;
+    });
+}
+
+function calculateAll() {
+    let dName = distSelect.value;
+    let grandTotalMoney = 0;
+    products.forEach((p, pIdx) => {
+        let sumQty = distributorsData[dName][pIdx].reduce((a, b) => a + b, 0);
+        let totalMoneyVal = sumQty * p.price;
+        grandTotalMoney += totalMoneyVal;
+        // عرض مجموع الكميات في الجدول وليس المبلغ
+        document.getElementById(`total-qty-${pIdx}`).innerText = sumQty;
+    });
+    document.getElementById("grandTotal").innerText = grandTotalMoney.toFixed(2);
+    let pay = parseFloat(document.getElementById("payment").value) || 0;
+    let diff = pay - grandTotalMoney;
+    document.getElementById("finalDef").innerText = diff.toFixed(2);
+    document.getElementById("bigDiffDisplay").innerText = diff.toFixed(2);
+    updateLogic(diff, dName);
+}
+
+function updateLogic(diff, name) {
+    const msg = document.getElementById("personalizedMsg");
+    const big = document.getElementById("bigDiffDisplay");
+    if (diff >= 0) {
+        big.style.color = "var(--af-green)";
+        msg.innerHTML = diff < 10 ? `مبروك <span style="color:var(--af-green)">${name}</span> حسابك جيد ✅` : `<span style="color:var(--af-green)">ركز في حسابك</span> 🟢`;
+    } else {
+        big.style.color = diff >= -10 ? "var(--af-green)" : "var(--af-red)";
+        msg.innerHTML = diff >= -10 ? `<span style="color:var(--af-green)">مبروك حسابك ممتاز</span> ✨` : `<span style="color:var(--af-red)">حسابك يحتاج تركيز</span> ⚠️`;
+    }
+}
+
+function sendWhatsApp() {
+    const d = distributorsInfo.find(di => di.name === distSelect.value);
+    const total = document.getElementById("grandTotal").innerText;
+    const paid = document.getElementById("payment").value;
+    const diffVal = parseFloat(document.getElementById("finalDef").innerText);
+    
+    let statusEmoji = diffVal >= 0 ? "🟢" : "🔴";
+    let diffText = diffVal.toFixed(2);
+
+    // رسالة واتساب منسقة بحيث يكون الناتج بارزاً جداً
+    const message = `*📋 تقرير مبيعات مؤسسة أفرا إخوان*
+
+*👤 الموزع:* ${d.name}
+
+*💰 الإجمالي المستحق:* ${total} DH
+*💵 المبلغ المدفوع:* ${paid} DH
+
+*⚖️ الناتج النهائي:* *👉 [[ ${diffText} DH ]] ${statusEmoji}*
+
+_تم الإرسال عبر نظام التوزيع الذكي_`;
+
+    window.open(`https://wa.me/${d.phone}?text=${encodeURIComponent(message)}`, '_blank');
+}
+
+function resetTable() {
+    if (confirm("مسح بيانات " + distSelect.value + "؟")) {
+        distributorsData[distSelect.value] = products.map(() => [0, 0, 0]);
+        localStorage.setItem("dist_" + distSelect.value, JSON.stringify(distributorsData[distSelect.value]));
+        setupTable(); calculateAll();
+    }
+}
+
+distSelect.onchange = () => { setupTable(); calculateAll(); };
+setupTable(); calculateAll();
+</script>
+</body>
+</html>
